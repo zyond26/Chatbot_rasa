@@ -1,0 +1,17 @@
+CREATE DATABASE JournalDB;
+
+USE JournalDB;
+
+CREATE TABLE Articles (
+    ArticleID INT PRIMARY KEY IDENTITY(1,1),
+    Title NVARCHAR(255),
+    Abstract NVARCHAR(MAX),
+    Author NVARCHAR(255),
+    PublishedDate DATE
+);
+
+
+INSERT INTO Articles (Title, Abstract, Author, PublishedDate)
+VALUES
+('Deep Learning for Natural Language Processing', 'An overview of deep learning methods in NLP...', 'John Doe', '2023-01-01'),
+('Quantum Computing and its Applications', 'A comprehensive review of quantum computing...', 'Jane Smith', '2022-06-15');

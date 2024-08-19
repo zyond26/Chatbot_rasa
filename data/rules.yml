@@ -1,0 +1,31 @@
+version: "3.1"
+
+rules:
+  - rule: Say goodbye anytime the user says goodbye
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+
+  - rule: Say 'I am a bot' anytime the user challenges
+    steps:
+      - intent: bot_challenge
+      - action: utter_iamabot
+
+  - rule: Truy vấn thông tin khách hàng
+    steps:
+      - intent: ask_customer_info
+      - action: action_query_database
+
+  - rule: Truy vấn bài báo theo tiêu đề
+    steps:
+      - intent: ask_article_by_title
+      - slot_was_set:
+          - query_type: "title"
+      - action: action_query_articles
+
+  - rule: Truy vấn bài báo theo tác giả
+    steps:
+      - intent: ask_article_by_author
+      - slot_was_set:
+          - query_type: "author"
+      - action: action_query_articles

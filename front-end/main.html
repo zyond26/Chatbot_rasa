@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rasa Chatbot</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="path/to/your/script.js"></script>
+    <style>
+      /* Andromeda Theme Colors */
+      :root {
+        --background-color: #0d1117;
+        --primary-color: #1f1feb;
+        --secondary-color: #8b949e;
+        --text-color: #c9d7d9;
+        --border-color: #21262d;
+        --user-message-bg: #21262d;
+        --bot-message-bg: #21262d;
+        --input-bg-color: #161b22;
+        --input-border-color: #30363d;
+        --shadow-color: rgba(0, 0, 0, 0.15);
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        font-family: "Fira Code", monospace;
+        margin: 0;
+      }
+
+      .chat-container {
+        width: 100%;
+        max-width: 400px;
+        background-color: var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .chat-header {
+        padding: 15px;
+        background-color: var(--primary-color);
+        text-align: center;
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: white;
+      }
+
+      .chat-title {
+        font-size: 1rem;
+        font-weight: normal;
+        margin-top: 5px;
+        color: var(--secondary-color);
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background-color: var(--background-color);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .chat-input {
+        display: flex;
+        border-top: 1px solid var(--border-color);
+        padding: 10px;
+        background-color: var(--border-color);
+      }
+
+      .chat-input input {
+        flex: 1;
+        border: none;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        padding: 10px;
+        outline: none;
+      }
+
+      .chat-input button {
+        background-color: var(--primary-color);
+        border: none;
+        color: white;
+      }
+
+      .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 4px;
+      }
+
+      .message.user {
+        text-align: right;
+        background-color: var(--user-message-bg);
+        color: var(--text-color);
+      }
+
+      .message.bot {
+        text-align: left;
+        background-color: var(--bot-message-bg);
+        color: var(--text-color);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-header">
+        Rasa Chatbot
+        <div class="chat-title">Your AI Assistant</div>
+      </div>
+      <div id="chat-messages" class="chat-messages"></div>
+      <div class="chat-input">
+        <input
+          id="user-input"
+          type="text"
+          class="form-control"
+          placeholder="Type a message..."
+        />
+        <button id="send-button" class="btn btn-primary">Send</button>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Chatbot Script -->
+    <script>
+      function sendMessage() {
+        const userMessage = document.getElementById("user-input").value;
+        document.getElementById("user-input").value = "";
+
+        if (userMessage.trim() === "") {
+          return;
+        }
+
+        // Display user message
+        document.getElementById(
+          "chat-messages"
+        ).innerHTML += `<div class="message user"><b>You:</b> ${userMessage}</div>`;
+        document.getElementById("chat-messages").scrollTop =
+          document.getElementById("chat-messages").scrollHeight;
+
+        // Send message to Rasa server
+        fetch("http://localhost:5005/webhooks/rest/webhook", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: userMessage }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            data.forEach((message) => {
+              document.getElementById(
+                "chat-messages"
+              ).innerHTML += `<div class="message bot"><b>Bot:</b> ${message.text}</div>`;
+              document.getElementById("chat-messages").scrollTop =
+                document.getElementById("chat-messages").scrollHeight;
+            });
+          });
+      }
+
+      document.getElementById("send-button").onclick = sendMessage;
+
+      document
+        .getElementById("user-input")
+        .addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            sendMessage();
+          }
+        });
+    </script>
+  </body>
+</html>
